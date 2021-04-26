@@ -52,3 +52,8 @@ node_modules
 # Cypress testing tool creates videos and screenshots directories
 cypress/videos
 cypress/screenshots
+
+# dotenv environment variables file
+.env
+.env.test
+.env*.local

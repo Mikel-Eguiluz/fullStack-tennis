@@ -1,5 +1,15 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Button, Paper, Box } from "@material-ui/core";
+import moment from "moment";
+import {
+  Button,
+  Paper,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@material-ui/core";
 // import { spacing } from "@material-ui/system";
 import {
   ViewState,
@@ -12,7 +22,7 @@ import {
   DayView,
   Appointments,
   GroupingPanel,
-  AppointmentTooltip,
+  // AppointmentTooltip,
 } from "@devexpress/dx-react-scheduler-material-ui";
 
 import { useAuth0 } from "@auth0/auth0-react";
@@ -30,7 +40,8 @@ export default function Calendar() {
   } = useContext(BookingsContext);
 
   const { user, isAuthenticated } = useAuth0();
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeSlot, setActiveSlot] = useState({});
   const [resources] = useState([
     {
       fieldName: "courtId",
@@ -110,43 +121,113 @@ export default function Calendar() {
 
   //console.log("data", schedulerData);
 
-  const HeaderContent = () => {
-    return <></>;
-  };
-  const TooltipContent = ({
-    appointmentData,
-    appointmentResources,
+  // const HeaderContent = () => {
+  //   return <></>;
+  // };
+
+  // const TooltipContent = ({
+  // const TooltipContent = ({
+  //   appointmentData,
+  //   appointmentResources,
+  //   ...restProps
+  // }) => {
+  //   const resource = appointmentResources[0];
+  //   const date = appointmentData.startDate;
+
+  //   return (
+  //     <AppointmentTooltip.Content
+  //       {...restProps}
+  //       appointmentData={appointmentData}
+  //     >
+  //       {!appointmentData.isBooked && (
+  //         <Box display="flex" justifyContent="space-around">
+  //           <Button
+  //             variant="contained"
+  //             color="primary"
+  //             onClick={() => {
+  //               addBooking({
+  //                 startDateTime: date,
+  //                 court: resource.text,
+  //                 userName: user.name,
+  //                 userId: user.sub,
+  //               });
+  //               console.log("resource ", restProps);
+  //               // console.log("appointmentData ", appointmentData);
+  //             }}
+  //           >
+  //             Book This Slot
+  //           </Button>
+  //         </Box>
+  //       )}
+  //     </AppointmentTooltip.Content>
+  //   );
+  // };
+  const Appointment = ({
+    children,
+    data,
+    style,
+    // onClick,
+
     ...restProps
   }) => {
-    const resource = appointmentResources[0];
-    const date = appointmentData.startDate;
-
+    const bgColor = data.title !== "BOOKED" ? "" : "#a19999";
+    // console.log(onClick);
     return (
-      <AppointmentTooltip.Content
+      <Appointments.Appointment
+        data={data}
+        style={{
+          backgroundColor: bgColor,
+          ...style,
+        }}
         {...restProps}
-        appointmentData={appointmentData}
+        onClick={
+          isAuthenticated &&
+          data.title !== "BOOKED" &&
+          (() => {
+            console.log(data);
+            setActiveSlot(data);
+            setModalOpen(true);
+          })
+        }
       >
-        {!appointmentData.isBooked && (
-          <Box display="flex" justifyContent="space-around">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                addBooking({
-                  startDateTime: date,
-                  court: resource.text,
-                  userName: user.name,
-                  userId: user.sub,
-                });
-                console.log("resource ", restProps);
-                // console.log("appointmentData ", appointmentData);
-              }}
-            >
-              Book This Slot
-            </Button>
-          </Box>
-        )}
-      </AppointmentTooltip.Content>
+        {children}
+      </Appointments.Appointment>
+    );
+  };
+  const BookDialog = () => {
+    return (
+      <Dialog
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {moment(activeSlot.startDate).format("dddd Do MMM , h:mm a")}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Court {activeSlot.courtId}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              addBooking({
+                startDateTime: activeSlot.startDate,
+                court: "Court " + activeSlot.courtId,
+                userName: user.name,
+                userId: user.sub,
+              });
+              setModalOpen(false);
+            }}
+            color="primary"
+            autoFocus
+          >
+            Book
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   };
 
@@ -199,16 +280,19 @@ export default function Calendar() {
           <ViewState currentDate={currentDate} />
           <GroupingState grouping={grouping} />
           <DayView startDayHour={CalendarStartHrs} endDayHour={20} />
-          <Appointments />
+          <Appointments appointmentComponent={Appointment} />
           <Resources data={resources} mainResourceName="courtId" />
           <IntegratedGrouping />
           <GroupingPanel />
-          {isAuthenticated && (
+          {/* {isAuthenticated && (
             <AppointmentTooltip
+              visible={visible}
+              // onVisibilityChange={this.toggleVisibility}
               contentComponent={TooltipContent}
               headerComponent={HeaderContent}
             />
-          )}
+          )} */}
+          <BookDialog />
         </Scheduler>
       )}
     </Paper>
