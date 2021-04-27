@@ -3,7 +3,7 @@ import React from "react";
 import {
   AppBar,
   Toolbar,
-  IconButton,
+  // IconButton,
   Typography,
   Button,
   Box,
@@ -20,24 +20,23 @@ export default function Header() {
     <>
       <AppBar>
         <Toolbar style={{ justifyContent: "space-between" }}>
-          <Box>
-            <IconButton
-              href="./"
-              edge="start"
-              color="inherit"
-              aria-label="home"
-            >
+          <Box display="flex">
+            <Button href="./" edge="start" color="inherit" aria-label="home">
               <SportsBaseballRoundedIcon fontSize="large" />
-            </IconButton>
+              <Typography variant="h6"> &nbsp;HOME </Typography>
+            </Button>
+
             {isAuthenticated && (
-              <Button
-                href="./mybookings"
-                edge="start"
-                color="inherit"
-                aria-label="home"
-              >
-                <Typography variant="h6"> My Bookings</Typography>
-              </Button>
+              <Box borderLeft={1} borderColor="grey.500">
+                <Button
+                  href="./mybookings"
+                  edge="start"
+                  color="inherit"
+                  aria-label="home"
+                >
+                  <Typography variant="h6"> My Bookings</Typography>
+                </Button>{" "}
+              </Box>
             )}
           </Box>
           <Typography variant="h6"> Brondesbury Tennis Booking</Typography>

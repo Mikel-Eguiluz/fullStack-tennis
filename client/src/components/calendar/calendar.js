@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Typography,
 } from "@material-ui/core";
 // import { spacing } from "@material-ui/system";
 import {
@@ -78,10 +79,11 @@ export default function Calendar() {
   let endDate = new Date(currentDate);
 
   let CalendarStartHrs = new Date().getHours() + 1;
-  // if (8 > CalendarStartHrs || CalendarStartHrs > 20) {
   if (8 > CalendarStartHrs) {
+    console.log(CalendarStartHrs);
     CalendarStartHrs = 8;
   }
+
   if (
     new Date(currentDate).setHours(0, 0, 0, 0) !==
     new Date().setHours(0, 0, 0, 0)
@@ -91,7 +93,6 @@ export default function Calendar() {
   for (let i = CalendarStartHrs; i < 20; i++) {
     startDate.setHours(i, 0, 0, 0);
     endDate.setHours(i + 1, 0, 0, 0);
-    // console.log(startDate, endDate);
     for (let i = 1; i < 8; i++) {
       const appointment = {
         startDate: new Date(startDate),
@@ -109,59 +110,13 @@ export default function Calendar() {
         ) {
           appointment.isBooked = true;
           appointment.title = "BOOKED";
-          // console.log("appointment", appointment.courtId);
-          // console.log("booked", booked.court);
         }
       }
       schedulerData.push(appointment);
     }
   }
+  console.log(CalendarStartHrs);
 
-  //const [data] = schedulerData;
-
-  //console.log("data", schedulerData);
-
-  // const HeaderContent = () => {
-  //   return <></>;
-  // };
-
-  // const TooltipContent = ({
-  // const TooltipContent = ({
-  //   appointmentData,
-  //   appointmentResources,
-  //   ...restProps
-  // }) => {
-  //   const resource = appointmentResources[0];
-  //   const date = appointmentData.startDate;
-
-  //   return (
-  //     <AppointmentTooltip.Content
-  //       {...restProps}
-  //       appointmentData={appointmentData}
-  //     >
-  //       {!appointmentData.isBooked && (
-  //         <Box display="flex" justifyContent="space-around">
-  //           <Button
-  //             variant="contained"
-  //             color="primary"
-  //             onClick={() => {
-  //               addBooking({
-  //                 startDateTime: date,
-  //                 court: resource.text,
-  //                 userName: user.name,
-  //                 userId: user.sub,
-  //               });
-  //               console.log("resource ", restProps);
-  //               // console.log("appointmentData ", appointmentData);
-  //             }}
-  //           >
-  //             Book This Slot
-  //           </Button>
-  //         </Box>
-  //       )}
-  //     </AppointmentTooltip.Content>
-  //   );
-  // };
   const Appointment = ({
     children,
     data,
@@ -232,7 +187,7 @@ export default function Calendar() {
   };
 
   return (
-    <Paper>
+    <Paper align="center">
       <Box py={1} display="flex" justifyContent="space-around">
         <Button
           disabled={new Date() >= new Date(currentDate)}
@@ -273,8 +228,10 @@ export default function Calendar() {
           Next Day
         </Button>
       </Box>
-      {CalendarStartHrs > 20 ? (
-        <h1> no more slots available today</h1>
+      {CalendarStartHrs >= 20 ? (
+        <Typography variant="h1">
+          No more slots available today, try tomorrow
+        </Typography>
       ) : (
         <Scheduler data={schedulerData}>
           <ViewState currentDate={currentDate} />
@@ -284,14 +241,6 @@ export default function Calendar() {
           <Resources data={resources} mainResourceName="courtId" />
           <IntegratedGrouping />
           <GroupingPanel />
-          {/* {isAuthenticated && (
-            <AppointmentTooltip
-              visible={visible}
-              // onVisibilityChange={this.toggleVisibility}
-              contentComponent={TooltipContent}
-              headerComponent={HeaderContent}
-            />
-          )} */}
           <BookDialog />
         </Scheduler>
       )}

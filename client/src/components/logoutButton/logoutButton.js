@@ -10,8 +10,10 @@ export default function LogoutButton() {
   // console.log(user);
   return (
     isAuthenticated && (
-      <Box>
-        <Typography variant="h6">{user.name}</Typography>
+      <Box display="flex" alignItems="center">
+        <Box>
+          <Typography variant="h6">{user.name}</Typography>
+        </Box>
         <Button
           color="inherit"
           onClick={() => logout({ returnTo: window.location.origin })}
