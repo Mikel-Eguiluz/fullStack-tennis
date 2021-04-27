@@ -9,9 +9,16 @@ module.exports = function (app) {
   );
 
   app.get("*", (req, res) => {
+    if (req.xhr) {
+      return res.sendStatus(404);
+    }
     if (process.env.NODE_ENV === "production") {
       res.sendFile(path.join(__dirname, "../../client/", "build/index.html"));
+      console.log("production");
     }
+  });
+  app.get("", (req, res) => {
+    res.redirect();
   });
   app.all("*", (req, res) => {
     res.sendStatus(404);

@@ -36,7 +36,7 @@ sent as `application/json`
 - GET `/api/v1/bookings` - gets all bookings
 - GET `/api/v1/bookings/1234` - gets the upcoming bookings for the user with a userId of `1234`
 - POST `/api/v1/bookings` - adds a product (you need to send data in the request body, as shown above)
-- DELETE `api/v1/bookings/1234`deletes the product with an id of`1234` (404 if not found)
+- DELETE `api/v1/bookings/1234`deletes the Booking with an id of`1234` (404 if not found)
 
 ## Auth0 Settings
 
