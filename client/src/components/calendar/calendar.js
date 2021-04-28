@@ -109,13 +109,15 @@ export default function Calendar() {
           "Court " + appointment.courtId === booked.court
         ) {
           appointment.isBooked = true;
+          appointment.userName = booked.userName;
+          appointment.userId = booked.userName;
+
           appointment.title = "BOOKED";
         }
       }
       schedulerData.push(appointment);
     }
   }
-  console.log(CalendarStartHrs);
 
   const Appointment = ({
     children,
@@ -125,7 +127,8 @@ export default function Calendar() {
 
     ...restProps
   }) => {
-    const bgColor = data.title !== "BOOKED" ? "" : "#a19999";
+    // const bgColor = data.title !== "BOOKED" ? "" : "#a19999";
+    const bgColor = !data.isBooked ? "" : "#a19999";
     // console.log(onClick);
     return (
       <Appointments.Appointment
@@ -135,17 +138,26 @@ export default function Calendar() {
           ...style,
         }}
         {...restProps}
-        onClick={
-          isAuthenticated &&
-          data.title !== "BOOKED" &&
-          (() => {
-            console.log(data);
+        onClick={() => {
+          if (isAuthenticated && !data.isBooked) {
             setActiveSlot(data);
             setModalOpen(true);
-          })
-        }
+          }
+        }}
       >
         {children}
+        {data.isBooked && (
+          <Typography
+            style={{
+              color: "#fff",
+              maxWidth: "80%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {data.userName}
+          </Typography>
+        )}
       </Appointments.Appointment>
     );
   };
